@@ -1,5 +1,3 @@
-import '../component_style/UVInfo.css'
-
 export default {
   name: 'UVInfo',
 
