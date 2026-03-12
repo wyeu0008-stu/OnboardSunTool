@@ -85,7 +85,7 @@ export default {
       const API_BASE = '';
 
       const response = await fetch(
-        `${API_BASE}/api/components/uv-info?city=${city}`
+        `/api/components/uv-info?city=${city}`
       );
 
       const data = await response.json();
