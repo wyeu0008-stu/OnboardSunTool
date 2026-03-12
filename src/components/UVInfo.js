@@ -63,41 +63,45 @@ export default {
 
   methods: {
     async fetchUVInfo(selectedCity = null) {
-      const finalCity = (selectedCity || this.cityInput).trim();
+    const finalCity = (selectedCity || this.cityInput).trim();
 
-      if (!finalCity) {
-        this.error = 'Please choose an Australian city.';
-        return;
+    if (!finalCity) {
+      this.error = 'Please choose an Australian city.';
+      return;
+    }
+
+    if (!this.australianCities.includes(finalCity)) {
+      this.error = 'Please select a valid Australian city from the list.';
+      return;
+    }
+
+    this.loading = true;
+    this.error = null;
+    this.showSuggestions = false;
+    this.highlightedIndex = -1;
+
+    try {
+      const city = encodeURIComponent(finalCity);
+      const API_BASE = 'http://13.54.206.223:5000';
+
+      const response = await fetch(
+        `${API_BASE}/api/components/uv-info?city=${city}`
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || data.error) {
+        throw new Error(data.message || 'Failed to load UV info.');
       }
 
-      // 尽量前端拦截
-      if (!this.australianCities.includes(finalCity)) {
-        this.error = 'Please select a valid Australian city from the list.';
-        return;
-      }
-
-      this.loading = true;
-      this.error = null;
-      this.showSuggestions = false;
-      this.highlightedIndex = -1;
-
-      try {
-        const city = encodeURIComponent(finalCity);
-        const response = await fetch(`http://127.0.0.1:5000/api/components/uv-info?city=${city}`);
-        const data = await response.json();
-
-        if (!response.ok || data.error) {
-          throw new Error(data.message || 'Failed to load UV info.');
-        }
-
-        this.uvData = data;
-        this.cityInput = finalCity;
-      } catch (err) {
-        this.error = err.message || 'Failed to load UV info.';
-      } finally {
-        this.loading = false;
-      }
-    },
+      this.uvData = data;
+      this.cityInput = finalCity;
+    } catch (err) {
+      this.error = err.message || 'Failed to load UV info.';
+    } finally {
+      this.loading = false;
+    }
+  },
 
     onInputFocus() {
       this.showSuggestions = true;
@@ -187,85 +191,45 @@ export default {
       class="card uv-alert"
       :class="uvData ? getRiskClass(uvData.riskLevel) : ''"
     >
-      <div v-if="loading" class="uv-loading">
-        <p>Loading UV information...</p>
-      </div>
+      <div class="card-header">
+        <h2>☀️ UV Alert</h2>
 
-      <div v-else-if="error" class="uv-error">
-        <div class="card-header">
-          <h2>☀️ UV Alert</h2>
+        <div class="location-picker">
+          <div class="location-input-wrap">
+            <input
+              v-model="cityInput"
+              type="text"
+              placeholder="Choose an Australian city"
+              @focus="onInputFocus"
+              @input="onInputChange"
+              @keydown="handleKeydown"
+              @blur="hideSuggestionsLater"
+            />
 
-          <div class="location-picker">
-            <div class="location-input-wrap">
-              <input
-                v-model="cityInput"
-                type="text"
-                placeholder="Choose an Australian city"
-                @focus="onInputFocus"
-                @input="onInputChange"
-                @keydown="handleKeydown"
-                @blur="hideSuggestionsLater"
-              />
-
+            <div
+              v-if="showSuggestions && filteredCities.length"
+              class="location-suggestions"
+            >
               <div
-                v-if="showSuggestions && filteredCities.length"
-                class="location-suggestions"
+                v-for="(city, index) in filteredCities"
+                :key="city"
+                class="suggestion-item"
+                :class="{ active: highlightedIndex === index }"
+                @mousedown.prevent="selectCity(city)"
               >
-                <div
-                  v-for="(city, index) in filteredCities"
-                  :key="city"
-                  class="suggestion-item"
-                  :class="{ active: highlightedIndex === index }"
-                  @mousedown.prevent="selectCity(city)"
-                >
-                  {{ city }}
-                </div>
+                {{ city }}
               </div>
             </div>
-
-            <button @click="fetchUVInfo()">Search</button>
           </div>
-        </div>
 
-        <p class="uv-error-text">Error: {{ error }}</p>
+          <button @click="fetchUVInfo()">Search</button>
+        </div>
       </div>
 
-      <template v-else-if="uvData">
-        <div class="card-header">
-          <h2>☀️ UV Alert</h2>
+      <p v-if="error" class="uv-error-text">{{ error }}</p>
+      <p v-if="loading" class="uv-loading-text">Loading UV information...</p>
 
-          <div class="location-picker">
-            <div class="location-input-wrap">
-              <input
-                v-model="cityInput"
-                type="text"
-                placeholder="Choose an Australian city"
-                @focus="onInputFocus"
-                @input="onInputChange"
-                @keydown="handleKeydown"
-                @blur="hideSuggestionsLater"
-              />
-
-              <div
-                v-if="showSuggestions && filteredCities.length"
-                class="location-suggestions"
-              >
-                <div
-                  v-for="(city, index) in filteredCities"
-                  :key="city"
-                  class="suggestion-item"
-                  :class="{ active: highlightedIndex === index }"
-                  @mousedown.prevent="selectCity(city)"
-                >
-                  {{ city }}
-                </div>
-              </div>
-            </div>
-
-            <button @click="fetchUVInfo()">Search</button>
-          </div>
-        </div>
-
+      <template v-if="uvData && !loading">
         <div class="alert-level">
           <div class="uv-number" :class="getRiskClass(uvData.riskLevel)">
             {{ uvData.uvNumber }}
