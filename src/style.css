@@ -219,15 +219,9 @@ button {
   }
 }
 
-.guide-page-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.back-btn,
-.guide-entry-btn {
+.guide-entry-btn,
+.back-btn {
+  margin-top: 18px;
   padding: 10px 16px;
   border: none;
   border-radius: 12px;
@@ -237,9 +231,16 @@ button {
   font-size: 14px;
 }
 
-.back-btn:hover,
-.guide-entry-btn:hover {
+.guide-entry-btn:hover,
+.back-btn:hover {
   opacity: 0.92;
+}
+
+.guide-page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .guide-stack {
