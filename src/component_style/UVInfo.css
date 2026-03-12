@@ -1,0 +1,258 @@
+.card.uv-alert {
+  border-radius: 18px;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-left: 6px solid #d9d9d9;
+  transition: all 0.25s ease;
+}
+
+.card.uv-alert.risk-low {
+  border-left-color: #2e7d32;
+  background: linear-gradient(180deg, #ffffff 0%, #f5fbf5 100%);
+}
+
+.card.uv-alert.risk-moderate {
+  border-left-color: #f9a825;
+  background: linear-gradient(180deg, #ffffff 0%, #fffaf0 100%);
+}
+
+.card.uv-alert.risk-high {
+  border-left-color: #ef6c00;
+  background: linear-gradient(180deg, #ffffff 0%, #fff5eb 100%);
+}
+
+.card.uv-alert.risk-very-high {
+  border-left-color: #d32f2f;
+  background: linear-gradient(180deg, #ffffff 0%, #fff1f1 100%);
+}
+
+.card.uv-alert.risk-extreme {
+  border-left-color: #6a1b9a;
+  background: linear-gradient(180deg, #ffffff 0%, #faf3ff 100%);
+}
+
+.card.uv-alert.risk-unknown {
+  border-left-color: #607d8b;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.location-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.location-actions input {
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.location-actions button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.alert-level {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.uv-number {
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.risk-title {
+  margin: 4px 0 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.city {
+  margin: 0;
+  color: #666;
+}
+
+.risk-low {
+  color: #2e7d32;
+}
+
+.risk-moderate {
+  color: #f9a825;
+}
+
+.risk-high {
+  color: #ef6c00;
+}
+
+.risk-very-high {
+  color: #d32f2f;
+}
+
+.risk-extreme {
+  color: #6a1b9a;
+}
+
+.risk-unknown {
+  color: #607d8b;
+}
+
+.alert-message {
+  margin-top: 16px;
+  color: #333;
+}
+
+.risk-scale {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.risk-scale span {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.45;
+  transition: all 0.2s ease;
+}
+
+.risk-scale span.active {
+  opacity: 1;
+  transform: scale(1.03);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.risk-scale .low {
+  background: rgba(46, 125, 50, 0.12);
+  color: #2e7d32;
+}
+
+.risk-scale .moderate {
+  background: rgba(249, 168, 37, 0.16);
+  color: #f9a825;
+}
+
+.risk-scale .high {
+  background: rgba(239, 108, 0, 0.14);
+  color: #ef6c00;
+}
+
+.risk-scale .very-high {
+  background: rgba(211, 47, 47, 0.14);
+  color: #d32f2f;
+}
+
+.risk-scale .extreme {
+  background: rgba(106, 27, 154, 0.14);
+  color: #6a1b9a;
+}
+
+.updated {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #777;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.stats-row > div {
+  padding: 12px;
+  border-radius: 12px;
+  background: #f7f7f7;
+}
+
+.stats-row p {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: #666;
+}
+
+.stats-row strong {
+  font-size: 16px;
+  color: #222;
+}
+
+.location-picker {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.location-input-wrap {
+  position: relative;
+  width: 240px;
+}
+
+.location-input-wrap input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #d7dce2;
+  border-radius: 10px;
+  outline: none;
+  font-size: 14px;
+  background: #fff;
+}
+
+.location-input-wrap input:focus {
+  border-color: #8aa4c8;
+  box-shadow: 0 0 0 3px rgba(138, 164, 200, 0.15);
+}
+
+.location-picker button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 10px;
+  background: #1f2937;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.location-picker button:hover {
+  opacity: 0.92;
+}
+
+.location-suggestions {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #e3e7ec;
+  border-radius: 12px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
+  z-index: 50;
+}
+
+.suggestion-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.suggestion-item:hover,
+.suggestion-item.active {
+  background: #f3f6fa;
+}
