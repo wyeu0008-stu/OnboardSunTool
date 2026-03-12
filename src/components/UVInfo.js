@@ -82,7 +82,7 @@ export default {
 
     try {
       const city = encodeURIComponent(finalCity);
-      const API_BASE = 'http://13.54.206.223:5000';
+      const API_BASE = '';
 
       const response = await fetch(
         `${API_BASE}/api/components/uv-info?city=${city}`
