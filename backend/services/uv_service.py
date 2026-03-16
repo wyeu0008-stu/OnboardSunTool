@@ -20,6 +20,49 @@ def get_risk_level(uv):
         return "Extreme", "Avoid being outside during midday hours."
 
 
+def calculate_sunscreen_dosage(uv):
+    """
+    Calculate recommended sunscreen dosage (in teaspoons) 
+    based on UV index level.
+    """
+    if uv is None:
+        return {
+            "face": 0,
+            "arms": 0,
+            "legs": 0,
+            "explanation": "UV data unavailable. Unable to calculate dosage."
+        }
+
+    if uv <= 2:
+        return {
+            "face": 0.5,
+            "arms": 1,
+            "legs": 1,
+            "explanation": "Low UV level. Minimal sunscreen required."
+        }
+    elif uv <= 5:
+        return {
+            "face": 1,
+            "arms": 1.5,
+            "legs": 1.5,
+            "explanation": "Moderate UV level. Apply sunscreen evenly."
+        }
+    elif uv <= 7:
+        return {
+            "face": 1.5,
+            "arms": 2,
+            "legs": 2,
+            "explanation": "High UV level increases burn risk. Use adequate protection."
+        }
+    else:
+        return {
+            "face": 2,
+            "arms": 3,
+            "legs": 3,
+            "explanation": "Very high or extreme UV. Reapply frequently and limit exposure."
+        }
+
+
 def geocode_city(city_name):
     params = {
         "name": city_name,
@@ -133,7 +176,12 @@ def build_uv_info(city_name="Melbourne"):
 
     peak_uv_value, peak_time_str, high_uv_period, high_uv_duration = find_peak_and_high_period(today_data)
 
-    risk_level, message = get_risk_level(current_uv)
+    # 🔥 改成根据 peak UV 判断风险
+    risk_level, message = get_risk_level(peak_uv_value)
+
+    # 🔥 改成根据 peak UV 计算 dosage
+    dosage_info = calculate_sunscreen_dosage(peak_uv_value)
+
     city_display = f'{location["name"]}, {location["country"]}'
 
     return {
@@ -145,5 +193,11 @@ def build_uv_info(city_name="Melbourne"):
         "peakUVIndex": round(peak_uv_value) if peak_uv_value is not None else None,
         "peakTime": peak_time_str.split("T")[1] if peak_time_str and "T" in peak_time_str else "N/A",
         "highUVPeriod": high_uv_period,
-        "highUVDuration": high_uv_duration
+        "highUVDuration": high_uv_duration,
+        "sunscreenDosage": {
+            "face": dosage_info["face"],
+            "arms": dosage_info["arms"],
+            "legs": dosage_info["legs"]
+        },
+        "dosageExplanation": dosage_info["explanation"]
     }
