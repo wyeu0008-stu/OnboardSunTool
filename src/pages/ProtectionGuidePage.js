@@ -18,7 +18,7 @@ export default {
   data() {
     return {
       selectedSkinType: 'Type III',
-      uvIndex: 11   // 临时测试值
+      uvIndex: 11 
     }
   },
 
