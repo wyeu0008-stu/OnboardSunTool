@@ -2,6 +2,7 @@ import AwarenessDashboard from '../components/AwarenessDashboard.js'
 import PersonalSkinRisk from '../components/PersonalSkinRisk.js'
 import UVClothingGuide from '../components/UVClothingGuide.js'
 import SunscreenProtector from '../components/SunscreenProtector.js'
+import UVInfo from '../components/UVInfo.js'
 
 export default {
   name: 'ProtectionGuidePage',
@@ -10,7 +11,8 @@ export default {
     AwarenessDashboard,
     PersonalSkinRisk,
     UVClothingGuide,
-    SunscreenProtector
+    SunscreenProtector,
+    UVInfo
   },
 
   emits: ['go-home'],
@@ -18,7 +20,7 @@ export default {
   data() {
     return {
       selectedSkinType: 'Type III',
-      uvIndex: 11 
+      uvIndex: 0 
     }
   },
 
@@ -44,6 +46,8 @@ export default {
           :selected-skin-type="selectedSkinType"
           @skin-type-changed="updateSkinType"
         />
+
+        <UVInfo @update-uv="uvIndex = $event" />
 
         <UVClothingGuide
           :uv-index="uvIndex"
