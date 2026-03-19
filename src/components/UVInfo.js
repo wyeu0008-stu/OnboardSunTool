@@ -1,6 +1,9 @@
 export default {
   name: 'UVInfo',
 
+  // ✅ Added: Pass data to the parent component
+  emits: ['update-uv'],
+
   data() {
     return {
       uvData: null,
@@ -12,33 +15,11 @@ export default {
       highlightedIndex: -1,
 
       australianCities: [
-        'Melbourne',
-        'Sydney',
-        'Brisbane',
-        'Perth',
-        'Adelaide',
-        'Canberra',
-        'Hobart',
-        'Darwin',
-        'Gold Coast',
-        'Newcastle',
-        'Wollongong',
-        'Geelong',
-        'Townsville',
-        'Cairns',
-        'Ballarat',
-        'Bendigo',
-        'Toowoomba',
-        'Launceston',
-        'Alice Springs',
-        'Mildura',
-        'Shepparton',
-        'Bunbury',
-        'Rockhampton',
-        'Mackay',
-        'Tamworth',
-        'Orange',
-        'Wagga Wagga'
+        'Melbourne','Sydney','Brisbane','Perth','Adelaide','Canberra',
+        'Hobart','Darwin','Gold Coast','Newcastle','Wollongong','Geelong',
+        'Townsville','Cairns','Ballarat','Bendigo','Toowoomba',
+        'Launceston','Alice Springs','Mildura','Shepparton','Bunbury',
+        'Rockhampton','Mackay','Tamworth','Orange','Wagga Wagga'
       ]
     }
   },
@@ -63,45 +44,49 @@ export default {
 
   methods: {
     async fetchUVInfo(selectedCity = null) {
-    const finalCity = (selectedCity || this.cityInput).trim();
+      const finalCity = (selectedCity || this.cityInput).trim();
 
-    if (!finalCity) {
-      this.error = 'Please choose an Australian city.';
-      return;
-    }
-
-    if (!this.australianCities.includes(finalCity)) {
-      this.error = 'Please select a valid Australian city from the list.';
-      return;
-    }
-
-    this.loading = true;
-    this.error = null;
-    this.showSuggestions = false;
-    this.highlightedIndex = -1;
-
-    try {
-      const city = encodeURIComponent(finalCity);
-      const API_BASE = '';
-
-      const response = await fetch(
-        `/api/components/uv-info?city=${city}`
-      );
-
-      const data = await response.json();
-
-      if (!response.ok || data.error) {
-        throw new Error(data.message || 'Failed to load UV info.');
+      if (!finalCity) {
+        this.error = 'Please choose an Australian city.';
+        return;
       }
 
-      this.uvData = data;
-      this.cityInput = finalCity;
-    } catch (err) {
-      this.error = err.message || 'Failed to load UV info.';
-    } finally {
-      this.loading = false;
-    }
-  },
+      if (!this.australianCities.includes(finalCity)) {
+        this.error = 'Please select a valid Australian city from the list.';
+        return;
+      }
+
+      this.loading = true;
+      this.error = null;
+      this.showSuggestions = false;
+      this.highlightedIndex = -1;
+
+      try {
+        const city = encodeURIComponent(finalCity);
+
+        const response = await fetch(
+          `/api/components/uv-info?city=${city}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || data.error) {
+          throw new Error(data.message || 'Failed to load UV info.');
+        }
+
+        // ✅ Save data
+        this.uvData = data;
+        this.cityInput = finalCity;
+
+        // ✅ Pass the UV values ​​to the parent component
+        this.$emit('update-uv', data.uvNumber);
+
+      } catch (err) {
+        this.error = err.message || 'Failed to load UV info.';
+      } finally {
+        this.loading = false;
+      }
+    },
 
     onInputFocus() {
       this.showSuggestions = true;
@@ -222,7 +207,10 @@ export default {
             </div>
           </div>
 
-          <button @click="fetchUVInfo()">Search</button>
+          <div class="location-actions">
+            <button @click="fetchUVInfo()">Search</button>
+            <button @click="useMyLocation">Use my location</button>
+          </div>
         </div>
       </div>
 

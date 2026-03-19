@@ -61,9 +61,6 @@ def fetch_uv_data(latitude, longitude, timezone="auto"):
 
 
 def extract_today_hourly(hourly_times, hourly_uv, current_time_str):
-    """
-    Only retain data for the current.time day.
-    """
     if not current_time_str:
         return []
 
@@ -78,23 +75,13 @@ def extract_today_hourly(hourly_times, hourly_uv, current_time_str):
 
 
 def find_peak_and_high_period(today_data):
-    """
-    today_data: [(time_str, uv), ...]
-    return:
-      peak_uv_value,
-      peak_time,
-      high_uv_period,
-      high_uv_duration
-    """
     valid = [(t, uv) for t, uv in today_data if uv is not None]
 
     if not valid:
         return None, None, "N/A", "0hrs"
 
-    # Find the peak value of the day
     peak_time_str, peak_uv_value = max(valid, key=lambda x: x[1])
 
-    # Find periods with high UV (defined as UV >= 6).
     high_uv_times = [t for t, uv in valid if uv >= 6]
 
     if not high_uv_times:
@@ -112,8 +99,19 @@ def find_peak_and_high_period(today_data):
     return peak_uv_value, peak_time_str, period, f"{duration_hours}hrs"
 
 
-def build_uv_info(city_name="Melbourne"):
-    location = geocode_city(city_name)
+def build_uv_info(city_name=None, latitude=None, longitude=None, location_label=None):
+    if latitude is not None and longitude is not None:
+        location = {
+            "name": location_label or "My location",
+            "country": "",
+            "latitude": float(latitude),
+            "longitude": float(longitude),
+            "timezone": "auto",
+        }
+    else:
+        city_name = city_name or "Melbourne"
+        location = geocode_city(city_name)
+
     raw = fetch_uv_data(
         latitude=location["latitude"],
         longitude=location["longitude"],
@@ -134,7 +132,11 @@ def build_uv_info(city_name="Melbourne"):
     peak_uv_value, peak_time_str, high_uv_period, high_uv_duration = find_peak_and_high_period(today_data)
 
     risk_level, message = get_risk_level(current_uv)
-    city_display = f'{location["name"]}, {location["country"]}'
+
+    if location["country"]:
+        city_display = f'{location["name"]}, {location["country"]}'
+    else:
+        city_display = location["name"]
 
     return {
         "uvNumber": round(current_uv) if current_uv is not None else None,
