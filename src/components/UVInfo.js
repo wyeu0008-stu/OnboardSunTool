@@ -1,7 +1,7 @@
 export default {
   name: 'UVInfo',
 
-  // ✅ 新增：向父组件传数据
+  // ✅ Added: Pass data to the parent component
   emits: ['update-uv'],
 
   data() {
@@ -74,11 +74,11 @@ export default {
           throw new Error(data.message || 'Failed to load UV info.');
         }
 
-        // ✅ 保存数据
+        // ✅ Save data
         this.uvData = data;
         this.cityInput = finalCity;
 
-        // ✅ 关键：把 UV 数值传给父组件
+        // ✅ Pass the UV values ​​to the parent component
         this.$emit('update-uv', data.uvNumber);
 
       } catch (err) {
