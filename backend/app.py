@@ -8,12 +8,28 @@ CORS(app)
 
 @app.route("/api/components/uv-info", methods=["GET"])
 def uv_info_api():
-    city = request.args.get("city", "Melbourne")
+    city = request.args.get("city")
+    latitude = request.args.get("latitude")
+    longitude = request.args.get("longitude")
+    label = request.args.get("label", "My location")
+
     try:
-        data = get_uv_info_data(city_name=city)
+        if latitude and longitude:
+            data = get_uv_info_data(
+                latitude=latitude,
+                longitude=longitude,
+                location_label=label
+            )
+        else:
+            data = get_uv_info_data(city_name=city or "Melbourne")
+
         return jsonify(data)
+
+    except ValueError as e:
+        return jsonify({"error": True, "message": str(e)}), 400
     except Exception as e:
         return jsonify({"error": True, "message": str(e)}), 500
+
 
 @app.route("/api/components/weather", methods=["GET"])
 def weather_api():
@@ -22,6 +38,7 @@ def weather_api():
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": True, "message": str(e)}), 500
+
 
 @app.route("/api/components/cancer", methods=["GET"])
 def cancer_api():
@@ -33,6 +50,7 @@ def cancer_api():
     except Exception as e:
         return jsonify({"error": True, "message": str(e)}), 500
 
+
 @app.route("/api/components/postcodes", methods=["GET"])
 def postcodes_api():
     state = request.args.get("state")
@@ -42,5 +60,6 @@ def postcodes_api():
     except Exception as e:
         return jsonify({"error": True, "message": str(e)}), 500
 
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
+    app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
