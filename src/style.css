@@ -473,6 +473,7 @@ button:hover {
   .epic2-bar-item {
     min-width: 90px;
   }
+}
 
 @media (max-width: 768px) {
   .page {
@@ -598,5 +599,4 @@ button:hover {
   margin-top: 10px;
   color: #6b7280;
   font-size: 0.95rem;
-}
 }
