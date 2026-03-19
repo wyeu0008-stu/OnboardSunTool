@@ -10,7 +10,6 @@ export default {
 
   computed: {
     clothingAdvice() {
-
       if (this.uvIndex <= 2) {
         return [
           { icon: '🕶', text: 'Wear sunglasses' }
@@ -51,24 +50,26 @@ export default {
   },
 
   template: `
-    <section class="card">
-      <h3>UV-Based Clothing Guide</h3>
+    <section class="epic2-card">
+      <h3 class="epic2-title">UV-Based Clothing Guide</h3>
 
-      <p>
+      <p class="epic2-subtext">
         Current UV Index: <strong>{{ uvIndex }}</strong>
       </p>
 
-      <p>
-        Based on the current UV level, the following clothing is recommended to reduce sun exposure:
+      <p class="epic2-subtext">
+        Based on the current UV level, the following clothing is recommended to reduce sun exposure.
       </p>
 
-      <ul>
-        <li v-for="item in clothingAdvice" :key="item.text">
-          <span style="font-size:20px;margin-right:6px">{{ item.icon }}</span>
-          {{ item.text }}
-        </li>
-      </ul>
-
+      <div class="epic2-panel">
+        <h4>Recommended Clothing</h4>
+        <ul>
+          <li v-for="item in clothingAdvice" :key="item.text">
+            <span style="font-size:20px;margin-right:8px;">{{ item.icon }}</span>
+            {{ item.text }}
+          </li>
+        </ul>
+      </div>
     </section>
   `
 }

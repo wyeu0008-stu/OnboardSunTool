@@ -9,9 +9,9 @@ export default {
         { city: 'Perth', uv: 9 }
       ],
       skinCancerStats: [
-        { label: 'Australians diagnosed each year', value: 2 },
-        { label: 'Australians treated each year', value: 7 },
-        { label: 'Australians by age 70', value: 66 }
+        { label: 'Diagnosed yearly', value: 2 },
+        { label: 'Treated yearly', value: 7 },
+        { label: 'By age 70', value: 66 }
       ]
     }
   },
@@ -24,59 +24,63 @@ export default {
     }
   },
   template: `
-    <section class="card">
-      <h3>UV Awareness Dashboard</h3>
+    <section class="epic2-card">
+      <h3 class="epic2-title">UV Awareness Dashboard</h3>
 
-      <p>
+      <p class="epic2-subtext">
         Australia has some of the highest UV levels in the world. UV radiation can damage skin even
         on cool or cloudy days. A common myth is that only fair skin needs protection, but all skin
         types can be harmed by UV exposure.
       </p>
 
-      <p>
+      <p class="epic2-subtext">
         Young adults often underestimate long-term UV damage. Building daily protection habits helps
         reduce sunburn risk and supports long-term skin health.
       </p>
 
-      <div class="chart-block">
+      <div class="epic2-chart-block">
         <h4>Visualisation 1: Average UV Levels in Australian Cities</h4>
-        <div class="bar-chart">
+
+        <div class="epic2-bar-chart">
           <div
             v-for="item in uvTrendData"
             :key="item.city"
-            class="bar-item"
+            class="epic2-bar-item"
           >
+            <div class="epic2-bar-value">{{ item.uv }}</div>
             <div
-              class="bar"
-              :style="{ height: (item.uv / maxUV) * 140 + 'px' }"
+              class="epic2-bar"
+              :style="{ height: (item.uv / maxUV) * 160 + 'px' }"
             ></div>
-            <strong>{{ item.uv }}</strong>
-            <span>{{ item.city }}</span>
+            <div class="epic2-bar-label">{{ item.city }}</div>
           </div>
         </div>
-        <p class="chart-explanation">
-          This chart shows that UV levels remain high across major Australian cities, which means sun
-          protection is important in everyday outdoor activities.
+
+        <p class="epic2-chart-text">
+          This chart shows that UV levels remain high across major Australian cities, which means
+          sun protection is important in everyday outdoor activities.
         </p>
       </div>
 
-      <div class="chart-block">
+      <div class="epic2-chart-block">
         <h4>Visualisation 2: Skin Cancer Awareness Snapshot</h4>
-        <div class="bar-chart">
+
+        <div class="epic2-bar-chart">
           <div
             v-for="item in skinCancerStats"
             :key="item.label"
-            class="bar-item"
+            class="epic2-bar-item"
           >
+            <div class="epic2-bar-value">{{ item.value }}</div>
             <div
-              class="bar secondary"
-              :style="{ height: (item.value / maxStat) * 140 + 'px' }"
+              class="epic2-bar secondary"
+              :style="{ height: (item.value / maxStat) * 160 + 'px' }"
             ></div>
-            <strong>{{ item.value }}</strong>
-            <span>{{ item.label }}</span>
+            <div class="epic2-bar-label">{{ item.label }}</div>
           </div>
         </div>
-        <p class="chart-explanation">
+
+        <p class="epic2-chart-text">
           This chart highlights how common skin cancer is in Australia and why awareness, early
           prevention, and regular protection habits are essential.
         </p>
