@@ -79,29 +79,45 @@ export default {
     }
   },
   template: `
-    <section class="card">
-      <h3>Personal Skin Risk</h3>
+    <section class="epic2-card">
+      <h3 class="epic2-title">Personal Skin Risk</h3>
 
-      <label for="skinTypeSelect"><strong>Select your skin type:</strong></label>
-      <select
-        id="skinTypeSelect"
-        :value="selectedSkinType"
-        @change="changeSkinType"
-      >
-        <option
-          v-for="profile in skinProfiles"
-          :key="profile.type"
-          :value="profile.type"
+      <div class="epic2-form-row">
+        <label for="skinTypeSelect">Select your skin type:</label>
+        <select
+          id="skinTypeSelect"
+          :value="selectedSkinType"
+          @change="changeSkinType"
         >
-          {{ profile.type }} - {{ profile.tone }}
-        </option>
-      </select>
+          <option
+            v-for="profile in skinProfiles"
+            :key="profile.type"
+            :value="profile.type"
+          >
+            {{ profile.type }} - {{ profile.tone }}
+          </option>
+        </select>
+      </div>
 
-      <p><strong>Selected Profile:</strong> {{ currentProfile.type }} - {{ currentProfile.tone }}</p>
-      <p><strong>Sunburn Risk:</strong> {{ currentProfile.risk }}</p>
-      <p><strong>Estimated Burn Chance:</strong> {{ currentProfile.burnChance }}</p>
+      <div class="epic2-info-grid">
+        <div class="epic2-info-box">
+          <span class="label">Selected Profile</span>
+          <span class="value">{{ currentProfile.type }}</span>
+          <p>{{ currentProfile.tone }}</p>
+        </div>
 
-      <div class="advice-box">
+        <div class="epic2-info-box">
+          <span class="label">Sunburn Risk</span>
+          <span class="value">{{ currentProfile.risk }}</span>
+        </div>
+
+        <div class="epic2-info-box">
+          <span class="label">Estimated Burn Chance</span>
+          <span class="value">{{ currentProfile.burnChance }}</span>
+        </div>
+      </div>
+
+      <div class="epic2-panel">
         <h4>Personalised UV Advice</h4>
         <ul>
           <li v-for="item in currentProfile.advice" :key="item">{{ item }}</li>

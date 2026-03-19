@@ -41,14 +41,19 @@ export default {
     }
   },
   template: `
-    <section class="card">
-      <h3>UV-Based Clothing Guide</h3>
-      <p>
-        Your selected skin type may change how carefully you need to protect yourself during high UV periods.
+    <section class="epic2-card">
+      <h3 class="epic2-title">UV-Based Clothing Guide</h3>
+
+      <p class="epic2-subtext">
+        Based on the selected skin type, the following clothing guidance can help reduce sun exposure.
       </p>
-      <ul>
-        <li v-for="item in clothingAdvice" :key="item">{{ item }}</li>
-      </ul>
+
+      <div class="epic2-panel">
+        <h4>Recommended Clothing</h4>
+        <ul>
+          <li v-for="item in clothingAdvice" :key="item">{{ item }}</li>
+        </ul>
+      </div>
     </section>
   `
 }

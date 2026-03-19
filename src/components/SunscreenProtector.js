@@ -61,22 +61,35 @@ export default {
     }
   },
   template: `
-    <section class="card">
-      <h3>Sunscreen Protector</h3>
+    <section class="epic2-card">
+      <h3 class="epic2-title">Sunscreen Protector</h3>
 
-      <p><strong>Recommended SPF:</strong> {{ sunscreenPlan.spf }}</p>
-      <p><strong>Reapplication:</strong> {{ sunscreenPlan.reapply }}</p>
+      <div class="epic2-mini-grid">
+        <div class="epic2-info-box">
+          <span class="label">Recommended SPF</span>
+          <span class="value">{{ sunscreenPlan.spf }}</span>
+        </div>
 
-      <h4>Recommended Protection Actions</h4>
-      <ul>
-        <li v-for="item in sunscreenPlan.actions" :key="item">{{ item }}</li>
-      </ul>
+        <div class="epic2-info-box">
+          <span class="label">Reapplication</span>
+          <span class="value">{{ sunscreenPlan.reapply }}</span>
+        </div>
+      </div>
 
-      <div class="dosage-box">
-        <p><strong>Suggested Sunscreen Amount:</strong></p>
-        <p>Face: 1 teaspoon</p>
-        <p>Arms: 2 teaspoons</p>
-        <p>Legs: 2 teaspoons</p>
+      <div class="epic2-two-col">
+        <div class="epic2-panel">
+          <h4>Recommended Protection Actions</h4>
+          <ul>
+            <li v-for="item in sunscreenPlan.actions" :key="item">{{ item }}</li>
+          </ul>
+        </div>
+
+        <div class="epic2-panel">
+          <h4>Suggested Sunscreen Amount</h4>
+          <p><strong>Face:</strong> 1 teaspoon</p>
+          <p><strong>Arms:</strong> 2 teaspoons</p>
+          <p><strong>Legs:</strong> 2 teaspoons</p>
+        </div>
       </div>
     </section>
   `
