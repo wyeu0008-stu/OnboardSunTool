@@ -207,7 +207,10 @@ export default {
             </div>
           </div>
 
-          <button @click="fetchUVInfo()">Search</button>
+          <div class="location-actions">
+            <button @click="fetchUVInfo()">Search</button>
+            <button @click="useMyLocation">Use my location</button>
+          </div>
         </div>
       </div>
 
