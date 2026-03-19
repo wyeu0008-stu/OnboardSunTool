@@ -16,22 +16,26 @@ createApp({
 
   data() {
     return {
-      currentPage: 'home'
+      currentPage: 'home',
+      currentUVIndex: 0
     }
   },
 
   methods: {
     goHome() {
       this.currentPage = 'home'
+    },
+
+    updateUVIndex(uv) {
+      this.currentUVIndex = Number(uv) || 0
     }
   },
 
   template: `
     <div>
 
-      <!-- ===== NAVBAR ===== -->
       <nav class="navbar">
-        <div class="logo" @click="currentPage = 'home'"> UV Defender</div>
+        <div class="logo" @click="currentPage = 'home'">UV Defender</div>
 
         <div class="nav-links">
           <span :class="{ active: currentPage === 'home' }" @click="currentPage = 'home'">Home</span>
@@ -41,14 +45,11 @@ createApp({
         </div>
       </nav>
 
-      <!-- ===== PAGE CONTENT ===== -->
       <main class="page">
 
-        <!-- ===== HOME ===== -->
         <template v-if="currentPage === 'home'">
-          
           <section class="intro">
-            <h1> UV Defender</h1>
+            <h1>UV Defender</h1>
             <p>Real-time UV protection guidance for safer outdoor living</p>
           </section>
 
@@ -71,7 +72,6 @@ createApp({
 
           </section>
 
-          <!-- HERO IMAGE -->
           <section class="hero-image" style="text-align:center;">
             <img 
               src="https://images.unsplash.com/photo-1531129630896-1744cab0cafd?q=80&w=1200&auto=format&fit=crop"
@@ -82,20 +82,16 @@ createApp({
               Using shade is one of the most effective ways to reduce UV exposure.
             </p>
           </section>
-
         </template>
 
-        <!-- ===== UV PAGE ===== -->
         <template v-else-if="currentPage === 'uv'">
-          <UVInfo />
+          <UVInfo @update-uv="updateUVIndex" />
         </template>
 
-        <!-- ===== CALCULATOR ===== -->
         <template v-else-if="currentPage === 'calculator'">
-          <SunProTimer />
+          <SunProTimer :uv-index="currentUVIndex" />
         </template>
 
-        <!-- ===== GUIDE ===== -->
         <template v-else-if="currentPage === 'guide'">
           <ProtectionGuidePage @go-home="goHome" />
         </template>
