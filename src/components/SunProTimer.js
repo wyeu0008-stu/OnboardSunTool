@@ -13,9 +13,12 @@ export default {
       localUVIndex: 0,
       outdoorTime: 30,
       reminderMinutes: 120,
+
       reminderActive: false,
-      reminderMessage: '',
-      reminderTimerId: null
+      sunscreenCountdownSeconds: 0,
+      outdoorCountdownSeconds: 0,
+      countdownTimerId: null,
+      reminderMessage: ''
     }
   },
 
@@ -26,6 +29,22 @@ export default {
         const safeUV = Number(newValue) || 0
         this.localUVIndex = safeUV
         this.reminderMinutes = this.getRecommendedReminderMinutes(safeUV)
+
+        if (!this.reminderActive) {
+          this.resetCountdowns()
+        }
+      }
+    },
+
+    reminderMinutes() {
+      if (!this.reminderActive) {
+        this.resetCountdowns()
+      }
+    },
+
+    outdoorTime() {
+      if (!this.reminderActive) {
+        this.resetCountdowns()
       }
     }
   },
@@ -38,15 +57,17 @@ export default {
         return {
           spf: 'SPF 15+',
           advice: 'Low UV. Basic protection is usually enough.',
-          intervalText: 'Reapply every 2 hours'
+          intervalText: 'Reapply every 2 hours',
+          shadeText: 'Outdoor exposure is generally low risk.'
         }
       }
 
       if (uv <= 5) {
         return {
           spf: 'SPF 30+',
-          advice: 'Moderate UV. Use sunscreen and wear a hat.',
-          intervalText: 'Reapply every 2 hours'
+          advice: 'Moderate UV. Use sunscreen, sunglasses and a hat.',
+          intervalText: 'Reapply every 2 hours',
+          shadeText: 'Seek shade around midday where possible.'
         }
       }
 
@@ -54,7 +75,8 @@ export default {
         return {
           spf: 'SPF 50+',
           advice: 'High UV. Strong protection is recommended.',
-          intervalText: 'Reapply every 90 minutes'
+          intervalText: 'Reapply every 90 minutes',
+          shadeText: 'Seek shade and reduce prolonged exposure.'
         }
       }
 
@@ -62,23 +84,25 @@ export default {
         return {
           spf: 'SPF 50+',
           advice: 'Very High UV. Extra protection is needed.',
-          intervalText: 'Reapply every 60–90 minutes'
+          intervalText: 'Reapply every 75 minutes',
+          shadeText: 'Limit direct sun and use shade frequently.'
         }
       }
 
       return {
         spf: 'SPF 50+',
-        advice: 'Extreme UV. Minimise direct sun exposure.',
-        intervalText: 'Reapply every 60 minutes'
+        advice: 'Extreme UV. Avoid direct sun exposure where possible.',
+        intervalText: 'Reapply every 60 minutes',
+        shadeText: 'Return indoors or stay in deep shade where possible.'
       }
     },
 
-    formattedReminderTime() {
-      const totalSeconds = this.reminderMinutes * 60
-      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0')
-      const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0')
-      const seconds = '00'
-      return `${hours}:${minutes}:${seconds}`
+    formattedSunscreenCountdown() {
+      return this.formatTime(this.sunscreenCountdownSeconds)
+    },
+
+    formattedOutdoorCountdown() {
+      return this.formatTime(this.outdoorCountdownSeconds)
     }
   },
 
@@ -91,12 +115,25 @@ export default {
       return 60
     },
 
-    async startReminders() {
-      this.stopReminders()
+    formatTime(totalSeconds) {
+      const total = Math.max(0, Number(totalSeconds) || 0)
+      const hours = String(Math.floor(total / 3600)).padStart(2, '0')
+      const minutes = String(Math.floor((total % 3600) / 60)).padStart(2, '0')
+      const seconds = String(total % 60).padStart(2, '0')
+      return `${hours}:${minutes}:${seconds}`
+    },
 
-      const intervalMs = this.reminderMinutes * 60 * 1000
+    resetCountdowns() {
+      this.sunscreenCountdownSeconds = this.reminderMinutes * 60
+      this.outdoorCountdownSeconds = this.outdoorTime * 60
+    },
+
+    async startReminders() {
+      this.stopReminders(false)
+      this.resetCountdowns()
+
       this.reminderActive = true
-      this.reminderMessage = `Reminders started. Reapply every ${this.reminderMinutes} minutes.`
+      this.reminderMessage = `Protection timer started. Recommended reapply interval: ${this.reminderMinutes} minutes.`
 
       if ('Notification' in window && Notification.permission === 'default') {
         try {
@@ -106,32 +143,71 @@ export default {
         }
       }
 
-      this.reminderTimerId = setInterval(() => {
-        const text = `Time to reapply sunscreen. Current UV index: ${this.localUVIndex}.`
-
-        if ('Notification' in window && Notification.permission === 'granted') {
-          new Notification('UV Defender Reminder', {
-            body: text
-          })
-        } else {
-          alert(text)
+      this.countdownTimerId = setInterval(() => {
+        if (this.outdoorCountdownSeconds > 0) {
+          this.outdoorCountdownSeconds -= 1
         }
-      }, intervalMs)
+
+        if (this.sunscreenCountdownSeconds > 0) {
+          this.sunscreenCountdownSeconds -= 1
+        }
+
+        if (this.outdoorCountdownSeconds <= 0) {
+          this.sendShadeReminder()
+          this.stopReminders(false)
+          this.reminderMessage = 'Outdoor session finished. Return indoors or seek shade.'
+          return
+        }
+
+        if (this.sunscreenCountdownSeconds <= 0) {
+          this.sendSunscreenReminder()
+          this.sunscreenCountdownSeconds = this.reminderMinutes * 60
+        }
+      }, 1000)
     },
 
-    stopReminders() {
-      if (this.reminderTimerId) {
-        clearInterval(this.reminderTimerId)
-        this.reminderTimerId = null
+    stopReminders(showMessage = true) {
+      if (this.countdownTimerId) {
+        clearInterval(this.countdownTimerId)
+        this.countdownTimerId = null
       }
 
       this.reminderActive = false
-      this.reminderMessage = 'Reminders stopped.'
+      this.resetCountdowns()
+
+      if (showMessage) {
+        this.reminderMessage = 'Protection timer stopped.'
+      }
+    },
+
+    sendBrowserNotice(text) {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('UV Defender Reminder', {
+          body: text
+        })
+      } else {
+        alert(text)
+      }
+    },
+
+    sendSunscreenReminder() {
+      const text = `Time to reapply sunscreen. UV Index: ${this.localUVIndex}. Recommended protection: ${this.recommendedProtection.spf}.`
+      this.sendBrowserNotice(text)
+      this.reminderMessage = 'Sunscreen reminder sent. Timer restarted.'
+    },
+
+    sendShadeReminder() {
+      const text = `Outdoor time reached. Return indoors or seek shade now. Current UV Index: ${this.localUVIndex}.`
+      this.sendBrowserNotice(text)
     }
   },
 
+  mounted() {
+    this.resetCountdowns()
+  },
+
   beforeUnmount() {
-    this.stopReminders()
+    this.stopReminders(false)
   },
 
   template: `
@@ -170,15 +246,25 @@ export default {
             v-model="reminderMinutes"
           />
 
-          <button v-if="!reminderActive" @click="startReminders">🔔 Start Reminders</button>
-          <button v-else @click="stopReminders">⏹ Stop Reminders</button>
+          <button v-if="!reminderActive" @click="startReminders">
+            🔔 Start Reminders
+          </button>
 
-          <p v-if="reminderMessage" class="reminder-status">{{ reminderMessage }}</p>
+          <button v-else @click="stopReminders()">
+            ⏹ Stop Reminders
+          </button>
+
+          <p v-if="reminderMessage" class="reminder-status">
+            {{ reminderMessage }}
+          </p>
         </div>
 
         <div class="timer">
-          <p>Set Interval</p>
-          <strong>{{ formattedReminderTime }}</strong>
+          <p>Next Sunscreen Reminder</p>
+          <strong>{{ formattedSunscreenCountdown }}</strong>
+
+          <p style="margin-top:16px;">Outdoor Session Remaining</p>
+          <strong>{{ formattedOutdoorCountdown }}</strong>
         </div>
       </div>
 
@@ -190,7 +276,9 @@ export default {
         </div>
         <ul>
           <li>✔ {{ recommendedProtection.advice }}</li>
-          <li>🔔 UV-linked reminder interval is auto-set</li>
+          <li>☂ {{ recommendedProtection.shadeText }}</li>
+          <li>🔔 UV-linked interval shortens automatically at higher UV levels</li>
+          <li>⏱ Outdoor session countdown ends with a shade reminder</li>
         </ul>
       </div>
     </article>
