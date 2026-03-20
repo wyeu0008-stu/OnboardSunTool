@@ -3,6 +3,7 @@ import PersonalSkinRisk from '../components/PersonalSkinRisk.js'
 import UVClothingGuide from '../components/UVClothingGuide.js'
 import SunscreenProtector from '../components/SunscreenProtector.js'
 import UVInfo from '../components/UVInfo.js'
+import WeatherDashboard from '../components/WeatherDashboard.js'
 
 export default {
   name: 'ProtectionGuidePage',
@@ -12,7 +13,8 @@ export default {
     PersonalSkinRisk,
     UVClothingGuide,
     SunscreenProtector,
-    UVInfo
+    UVInfo,
+    WeatherDashboard
   },
 
   emits: ['go-home'],
@@ -31,34 +33,44 @@ export default {
   },
 
   template: `
-    <main class="page">
+  <main class="page">
 
-      <section class="guide-page-header">
-        <button class="back-btn" @click="$emit('go-home')">← Back</button>
-        <h2>Protection Guide</h2>
-      </section>
+    <!-- Header -->
+    <section class="guide-page-header">
+      <button class="back-btn" @click="$emit('go-home')">← Back</button>
+      <h2>Protection Guide</h2>
+    </section>
 
-      <section class="guide-stack">
+    <!-- Main Content -->
+    <section class="guide-stack">
 
-        <AwarenessDashboard />
+      <!-- 1. Awareness -->
+      <AwarenessDashboard />
 
-        <PersonalSkinRisk
-          :selected-skin-type="selectedSkinType"
-          @skin-type-changed="updateSkinType"
-        />
+      <!-- 2. Data Visualisation -->
+      <WeatherDashboard />
 
-        <UVInfo @update-uv="uvIndex = $event" />
+      <!-- 3. Personal Skin Risk -->
+      <PersonalSkinRisk
+        :selected-skin-type="selectedSkinType"
+        @skin-type-changed="updateSkinType"
+      />
 
-        <UVClothingGuide
-          :uv-index="uvIndex"
-        />
+      <!-- 4. UV Info -->
+      <UVInfo @update-uv="uvIndex = $event" />
 
-        <SunscreenProtector
-          :selected-skin-type="selectedSkinType"
-        />
+      <!-- 5. Clothing Guide -->
+      <UVClothingGuide
+        :uv-index="uvIndex"
+      />
 
-      </section>
+      <!-- 6. Sunscreen -->
+      <SunscreenProtector
+        :selected-skin-type="selectedSkinType"
+      />
 
-    </main>
-  `
+    </section>
+
+  </main>
+`
 }
